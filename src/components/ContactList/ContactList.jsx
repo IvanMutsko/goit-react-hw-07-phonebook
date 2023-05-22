@@ -6,36 +6,37 @@ import { ContactItem } from './ContactItem';
 
 const ContactList = () => {
   const filter = useSelector(getFilter);
-  const { data, isLoading, isSuccess } = useGetContactsQuery();
+  const { data: contacts, isLoading, isSuccess } = useGetContactsQuery();
 
   const filteringContactsList = () => {
     if (isSuccess) {
-      const filteredContacts = data.filter(contact =>
+      const filteredContacts = contacts.filter(contact =>
         contact.name.toLowerCase().includes(filter.toLowerCase())
       );
       return filteredContacts;
     }
   };
 
-  console.log(filteringContactsList());
+  let filteredContactsData = filteringContactsList();
 
   return (
     <>
       {isLoading ? (
         <p>Loading...</p>
-      ) : data.length === 0 ? (
+      ) : contacts.length === 0 ? (
         <p>
           Sorry, but you don't have any contacts yet. Add your first contact.
         </p>
       ) : (
         <List>
-          {data.map(({ id, name, phone }) => {
-            return (
-              <ListItem key={id}>
-                <ContactItem name={name} phone={phone} id={id} />
-              </ListItem>
-            );
-          })}
+          {!isLoading &&
+            filteredContactsData.map(({ id, name, phone }) => {
+              return (
+                <ListItem key={id}>
+                  <ContactItem name={name} phone={phone} id={id} />
+                </ListItem>
+              );
+            })}
         </List>
       )}
     </>
@@ -43,5 +44,3 @@ const ContactList = () => {
 };
 
 export default ContactList;
-
-// ДОРОБИТИ ФІЛЬТРАЦІЮ
