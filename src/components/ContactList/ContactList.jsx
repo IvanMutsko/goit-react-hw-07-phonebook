@@ -6,40 +6,34 @@ import { ContactItem } from './ContactItem';
 
 const ContactList = () => {
   const filter = useSelector(getFilter);
-  const { data: contacts, isLoading, isSuccess } = useGetContactsQuery();
+  const { data: contacts, isLoading } = useGetContactsQuery();
 
   const filteringContactsList = () => {
-    if (isSuccess) {
-      const filteredContacts = contacts.filter(contact =>
+    const filteredContacts =
+      contacts?.filter(contact =>
         contact.name.toLowerCase().includes(filter.toLowerCase())
-      );
-      return filteredContacts;
-    }
+      ) ?? [];
+
+    return filteredContacts;
   };
 
   let filteredContactsData = filteringContactsList();
 
-  return (
-    <>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : contacts.length === 0 ? (
-        <p>
-          Sorry, but you don't have any contacts yet. Add your first contact.
-        </p>
-      ) : (
-        <List>
-          {!isLoading &&
-            filteredContactsData.map(({ id, name, phone }) => {
-              return (
-                <ListItem key={id}>
-                  <ContactItem name={name} phone={phone} id={id} />
-                </ListItem>
-              );
-            })}
-        </List>
-      )}
-    </>
+  if (isLoading) return <p>Loading...</p>;
+
+  return filteredContactsData.length === 0 ? (
+    <p>Sorry, but you don't have any contacts yet. Add your first contact.</p>
+  ) : (
+    <List>
+      {!isLoading &&
+        filteredContactsData.map(({ id, name, phone }) => {
+          return (
+            <ListItem key={id}>
+              <ContactItem name={name} phone={phone} id={id} />
+            </ListItem>
+          );
+        })}
+    </List>
   );
 };
 
